@@ -44,6 +44,15 @@
                 font-size: 16px;
             }
 
+            .item-inv {
+                display: flex;
+                background: red;
+                border: none;
+                width: 50px;
+                height: 50px;
+                user-select: none;
+            }
+
         </style>
     </head>
     <body class="container text-center">
@@ -81,6 +90,15 @@
             document.addEventListener('dragover', (e) => {
                 const zone = getCurrentZone(e.target);
 
+                if (e.target.classList.contains('item')){
+                    const invItem = createInvisibleItem();
+
+                    // zone.insertBefore(invItem, e.target);
+                    // zone.removeChild(invItem);
+                    
+                    console.log(e.clientX);
+                }
+                
                 if (zone) {
                     e.preventDefault();
                 }
@@ -92,13 +110,13 @@
 
                     e.preventDefault();
 
-                    if (zone && currentDrag.startZone !== zone) {
+                   
                         if (e.target.classList.contains('item')) {
                             zone.insertBefore(currentDrag.node, e.target.nextElementSibling);
                         } else {
                             zone.insertBefore(currentDrag.node, zone.lastElementChild);
                         }
-                    }
+                    
 
                     currentDrag = null;
                 }
@@ -111,6 +129,13 @@
                 newDiv.classList.add('item');
                 newDiv.draggable = true;
 
+                return newDiv;
+            }
+
+            function createInvisibleItem() {
+                const newDiv = document.createElement('div');                
+                newDiv.classList.add('item-inv');
+                newDiv.draggable = true;
                 return newDiv;
             }
 
