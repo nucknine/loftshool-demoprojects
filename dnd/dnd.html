@@ -21,7 +21,7 @@
                 border-radius: 10px;
             }
 
-            .item, .new-item {
+            .item, .new-item, .item-inv {
                 margin: 0 10px 10px 0;
                 display: flex;
                 justify-content: center;
@@ -29,7 +29,7 @@
                 color: hsla(0, 0%, 40%, 1);
             }
 
-            .item, .new-item {
+            .item, .new-item, .item-inv {
                 border: 2px dashed #783db3;
                 border-radius: 10px;
                 width: 50px;
@@ -44,13 +44,15 @@
                 font-size: 16px;
             }
 
-            .item-inv {
-                display: flex;
-                background: red;
-                border: none;
-                width: 50px;
-                height: 50px;
+            .item-inv {                
+                background: transparent;
+                border: none;                
                 user-select: none;
+            }
+
+            .hide {
+                position: absolute;
+                top: -1000px;
             }
 
         </style>
@@ -74,29 +76,55 @@
                 if (e.target.classList.contains('new-item')) {
                     const newItem = createItem();
                     const zone = getCurrentZone(e.target);
-
                     zone.insertBefore(newItem, zone.lastElementChild)
                 }
             });
 
             document.addEventListener('dragstart', (e) => {
                 const zone = getCurrentZone(e.target);
-
+                
+                
                 if (zone) {
                     currentDrag = { startZone: zone, node: e.target };
                 }
+
+                const invItem = createInvisibleItem();
+                zone.insertBefore(invItem, currentDrag.node.nextElementSibling);
             });
 
             document.addEventListener('dragover', (e) => {
-                const zone = getCurrentZone(e.target);
+                let zone = getCurrentZone(e.target);
+               
+                currentDrag.node.classList.add('hide');
+                
+                if (zone !== currentDrag.startZone) {                    
+                    let invItemOld = currentDrag.startZone.querySelector('.item-inv');
+                    let newZone = getCurrentZone(e.target);
 
+                    currentDrag.startZone.removeChild(invItemOld);
+                }
+                
+                
+                
                 if (e.target.classList.contains('item')){
-                    const invItem = createInvisibleItem();
-
-                    // zone.insertBefore(invItem, e.target);
-                    // zone.removeChild(invItem);
                     
-                    console.log(e.clientX);
+                    if (e.offsetX > 25 && e.offsetX < 50) {
+                        
+                        let invItemOld = zone.querySelector('.item-inv');
+
+                        zone.removeChild(invItemOld);
+                        let invItem = createInvisibleItem();
+
+                        zone.insertBefore(invItem, e.target.nextElementSibling);
+                    } else if (e.offsetX < 25 && e.offsetX > 0) {
+                        
+                        let invItemOld = zone.querySelector('.item-inv');
+
+                        zone.removeChild(invItemOld);
+                        
+                        let invItem = createInvisibleItem();
+                        zone.insertBefore(invItem, e.target);
+                    }
                 }
                 
                 if (zone) {
@@ -107,17 +135,20 @@
             document.addEventListener('drop', (e) => {
                 if (currentDrag) {
                     const zone = getCurrentZone(e.target);
-
+                    let invItem = zone.querySelector('.item-inv');
+                    
                     e.preventDefault();
-
-                   
+                    
+                    currentDrag.node.classList.remove('hide');
+                    
                         if (e.target.classList.contains('item')) {
                             zone.insertBefore(currentDrag.node, e.target.nextElementSibling);
                         } else {
-                            zone.insertBefore(currentDrag.node, zone.lastElementChild);
+                            zone.insertBefore(currentDrag.node, invItem.nextElementSibling);
                         }
-                    
 
+                    
+                    zone.removeChild(invItem);
                     currentDrag = null;
                 }
             });
@@ -134,8 +165,7 @@
 
             function createInvisibleItem() {
                 const newDiv = document.createElement('div');                
-                newDiv.classList.add('item-inv');
-                newDiv.draggable = true;
+                newDiv.classList.add('item-inv');                
                 return newDiv;
             }
 
