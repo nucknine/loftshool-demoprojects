@@ -52,7 +52,8 @@
 
             .hide {
                 position: absolute;
-                top: -1000px;
+                left: -1000px;
+                /* visibility: hidden; */
             }
 
         </style>
@@ -97,12 +98,12 @@
                
                 currentDrag.node.classList.add('hide');
                 
-                if (zone !== currentDrag.startZone) {                    
-                    let invItemOld = currentDrag.startZone.querySelector('.item-inv');
-                    let newZone = getCurrentZone(e.target);
+                if (zone == currentDrag.startZone) {                    
+                    // let invItemOld = currentDrag.startZone.querySelector('.item-inv');
+                    // let newZone = getCurrentZone(e.target);
 
-                    currentDrag.startZone.removeChild(invItemOld);
-                }
+                    // currentDrag.startZone.removeChild(invItemOld);
+                
                 
                 
                 
@@ -126,10 +127,12 @@
                         zone.insertBefore(invItem, e.target);
                     }
                 }
-                
+            }
                 if (zone) {
                     e.preventDefault();
                 }
+
+                
             });
 
             document.addEventListener('drop', (e) => {
