@@ -84,6 +84,8 @@
 
                 if (zone) {
                     currentDrag = { startZone: zone, node: e.target };
+                    currentDrag.node.style.background = 'red';
+                   
                 }
             });
 
@@ -96,9 +98,9 @@
                     // zone.insertBefore(invItem, e.target);
                     // zone.removeChild(invItem);
                     
-                    console.log(e.clientX);
+                    
                 }
-                
+                // console.log(e.clientX);
                 if (zone) {
                     e.preventDefault();
                 }
@@ -117,7 +119,7 @@
                             zone.insertBefore(currentDrag.node, zone.lastElementChild);
                         }
                     
-
+                    //currentDrag.node.style.display = 'flex';
                     currentDrag = null;
                 }
             });
